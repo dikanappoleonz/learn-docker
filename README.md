@@ -7,5 +7,6 @@
 
 - [Introduction Docker](guides/introduction-containers/README.md)
 - [Basic Command](guides/basic-command/README.md)
+- [Management Container](guides/management-container/README.md)
 
 Dokumentasi [docs.docker.com/](https://docs.docker.com/)
