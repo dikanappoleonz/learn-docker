@@ -6,7 +6,7 @@ Docker Serach digunakan untuk mencari image pada repository. by default mengguna
 
 > Example: Search Nginx
 ```js
-dika@Docker-1:~$ sudo docker search nginx
+dika@docker-dika-node01:~$ sudo docker search nginx
 [sudo] password for dika: 
 NAME                              DESCRIPTION                                     STARS     OFFICIAL
 nginx                             Official build of Nginx.                        20206     [OK]
@@ -36,7 +36,7 @@ mtinny/nginx                      https://github.com/mtinny/k8s-nginx-toolbox   
 pull image digunakan untuk mengambil image dari registry atau repository. by default tag yang digunakan adalah latest jika tidak mendefiniskan tag 
 > Example: Pull Nginx
 ```js
-dika@Docker-1:~$ sudo docker pull nginx
+dika@docker-dika-node01:~$ sudo docker pull nginx
 Using default tag: latest
 latest: Pulling from library/nginx
 a2318d6c47ec: Pull complete
@@ -54,14 +54,14 @@ docker.io/library/nginx:latest
 ## Docker Image
 1. Melihat daftar list image
 ```js
-dika@Docker-1:~$ sudo docker image ls
+dika@docker-dika-node01:~$ sudo docker image ls
 REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
 nginx        latest    39286ab8a5e1   4 weeks ago   188MB
 ```
 
 2. Menghapus image
 ```js
-dika@Docker-1:~$ sudo docker image rm nginx
+dika@docker-dika-node01:~$ sudo docker image rm nginx
 Untagged: nginx:latest
 Untagged: nginx@sha256:04ba374043ccd2fc5c593885c0eacddebabd5ca375f9323666f28dfd5a9710e3
 Deleted: sha256:39286ab8a5e14aeaf5fdd6e2fac76e0c8d31a0c07224f0ee5e6be502f12e93f3
@@ -73,7 +73,7 @@ Deleted: sha256:d4f588811a337e0b01da46772d02f7f82ee5f9baff6886365ffb912d455f4f53
 Deleted: sha256:d73e21a1e27b0184b36f6578c8d0722a44da253bc74cd72e9788763f4a4de08f
 Deleted: sha256:8e2ab394fabf557b00041a8f080b10b4e91c7027b7c174f095332c7ebb6501cb
 
-dika@Docker-1:~$ sudo docker image ls
+dika@docker-dika-node01:~$ sudo docker image ls
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
@@ -81,7 +81,7 @@ REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 docker run digunakan untuk membuat dan menjalankan container. jika image sumber tidak ada maka akan secara otomatis pull dari repository default docker hub.
 > Example: create container nginx
 ```js
-dika@Docker-1:~$ sudo docker run -d --name web-kits -p 8080:80 nginx:latest
+dika@docker-dika-node01:~$ sudo docker run -d --name web-kits -p 8080:80 nginx:latest
 Unable to find image 'nginx:latest' locally
 latest: Pulling from library/nginx
 a2318d6c47ec: Pull complete
@@ -111,7 +111,7 @@ Status: Downloaded newer image for nginx:latest
 > docker container ls
 untuk melihat daftar list container yang sedang up
 ```js
-dika@Docker-1:~$ sudo docker container ls
+dika@docker-dika-node01:~$ sudo docker container ls
 CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                     NAMES
 03ed4f00840d   nginx:latest   "/docker-entrypoint.…"   23 minutes ago   Up 23 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web-kits
 ```
@@ -119,18 +119,18 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS  
 > docker container stop
 untuk stop prossess pada container
  ```js
-dika@Docker-1:~$ sudo docker container stop web-kits
+dika@docker-dika-node01:~$ sudo docker container stop web-kits
 web-kits
-dika@Docker-1:~$ sudo docker container ls
+dika@docker-dika-node01:~$ sudo docker container ls
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 > docker container start
 digunakan untuk menjalankan container
  ```js
-dika@Docker-1:~$ sudo docker container start web-kits
+dika@docker-dika-node01:~$ sudo docker container start web-kits
 web-kits
-dika@Docker-1:~$ sudo docker container ls
+dika@docker-dika-node01:~$ sudo docker container ls
 CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS         PORTS                                     NAMES
 03ed4f00840d   nginx:latest   "/docker-entrypoint.…"   29 minutes ago   Up 5 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web-kits
 ```
@@ -138,7 +138,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS  
 > docker container inspect
 melihat detail informasi pada container seperti tanggal pembuatan, IP Address, MAC Address
  ```js
-dika@Docker-1:~$ sudo docker container inspect web-kits
+dika@docker-dika-node01:~$ sudo docker container inspect web-kits
 [
     {
         "Id": "03ed4f00840d50a2c15ebf922cab2676d7ee975673d93de557e91075974178ce",
@@ -167,16 +167,16 @@ dika@Docker-1:~$ sudo docker container inspect web-kits
 > docker container rm -f
 untuk menghapus sebuah container, by default container yang masih up harus di stop terlebih dahulu jika ingin menghapusnya, namun kita bisa menggunakan opsi -f untuk menghapusnya secara paksa
  ```js
-dika@Docker-1:~$ sudo docker container rm -f web-kits
+dika@docker-dika-node01:~$ sudo docker container rm -f web-kits
 web-kits
-dika@Docker-1:~$ sudo docker container ls
+dika@docker-dika-node01:~$ sudo docker container ls
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 ## Docker Exec
 docker exec, digunakan untuk mengesekusi perintah di dalam container yang sedang berjalan.
  ```js
-dika@Docker-1:~$ sudo docker exec -it web-kits /bin/bash
+dika@docker-dika-node01:~$ sudo docker exec -it web-kits /bin/bash
 root@556fa343368f:/#
 ```
 
@@ -191,8 +191,8 @@ root@556fa343368f:/# echo '<h2><center>Selamat Datang di Website Komunitas IT</c
 
 root@556fa343368f:/# exit   //untuk keluar dari terminal container
 exit
-dika@Docker-1:~$
-dika@Docker-1:~$ ip -br a
+dika@docker-dika-node01:~$
+dika@docker-dika-node01:~$ ip -br a
 lo               UNKNOWN        127.0.0.1/8 ::1/128
 ens33            UP             192.168.76.123/24 fe80::2e0:4cff:fe41:7b12/64
 docker0          UP             172.17.0.1/16 fe80::42:e6ff:fe38:84cc/64
@@ -207,7 +207,7 @@ vethcd719f0@if8  UP             fe80::d49b:23ff:fed8:f72d/64
 ## Docker Top
 docker top, digunakan untuk melihat proces yang digunakan container atau istilahnya adalah task manager container.
  ```js
-dika@Docker-1:~$ sudo docker top web-kits
+dika@docker-dika-node01:~$ sudo docker top web-kits
 UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
 root                57615               57595               0                   14:51               ?                   00:00:00            nginx: master process nginx -g daemon off;
 sshd                57661               57615               0                   14:51               ?                   00:00:00            nginx: worker process
@@ -218,14 +218,14 @@ sshd                57662               57615               0                   
 > docker stats
 digunakan untuk melihat resources yang digunakan oleh container
  ```js
-dika@Docker-1:~$ sudo docker stats web-kits
+dika@docker-dika-node01:~$ sudo docker stats web-kits
 CONTAINER ID   NAME       CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
 556fa343368f   web-kits   0.00%     4.32MiB / 1.911GiB   0.22%     2.99kB / 1.39kB   1.23MB / 20.5kB   3
 ```
 
 > docker logs 
  ```js
-dika@Docker-1:~$ sudo docker logs web-kits
+dika@docker-dika-node01:~$ sudo docker logs web-kits
 /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
 /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
 /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
