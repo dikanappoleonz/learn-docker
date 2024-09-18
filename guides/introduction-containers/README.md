@@ -39,5 +39,3 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 docker --version
 ```
 [installation docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu)
-
-##
