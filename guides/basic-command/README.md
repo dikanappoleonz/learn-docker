@@ -95,16 +95,14 @@ Digest: sha256:04ba374043ccd2fc5c593885c0eacddebabd5ca375f9323666f28dfd5a9710e3
 Status: Downloaded newer image for nginx:latest
 03ed4f00840d50a2c15ebf922cab2676d7ee975673d93de557e91075974178ce
 ```
-- Options pada docker run
+> Options pada docker run
 ```js
--d		//untuk menjalankan container dalam mode dedicated atau berjalan di latar belakang.
-
+-d		    //untuk menjalankan container dalam mode dedicated atau berjalan di latar belakang.
 --name		//digunakan untuk memberikan sebuah nama untuk container
-
 -p 8080:80	//port pertama digunakan untuk mendefinisikan port pada host. dan port kedua adalah port didalam container
 ```
 
-- output
+>Open browser and access ip_address:port
 <p align="center">
   <img src="images/images-1.png" witdh="50%" height="50%" alt="nginx"/>
 </p>
