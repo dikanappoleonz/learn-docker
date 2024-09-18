@@ -3,3 +3,4 @@
 </p>
 
 ## Learning Docker
+> <b>Docker</b> is a software platform that helps developers build, run, and manage containers. <b>Containers</b> are standardized components that combine an application's source code with the operating system libraries and dependencies needed to run it.
