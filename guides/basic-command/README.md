@@ -97,7 +97,7 @@ Status: Downloaded newer image for nginx:latest
 ```
 > Options pada docker run
 ```js
--d		    //untuk menjalankan container dalam mode dedicated atau berjalan di latar belakang.
+-d		//untuk menjalankan container dalam mode dedicated atau berjalan di latar belakang.
 --name		//digunakan untuk memberikan sebuah nama untuk container
 -p 8080:80	//port pertama digunakan untuk mendefinisikan port pada host. dan port kedua adalah port didalam container
 ```
