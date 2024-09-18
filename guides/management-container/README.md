@@ -8,7 +8,7 @@ dika@docker-dika-node01:~$ sudo docker run -d --name db-mysql --memory 100m --cp
 ```
 
 ## Container Link 
-setelah container mysql sudah terinstall disini buat container phpmyadmin dan hubungkan ke container mysql.
+setelah container mysql sudah terinstall disini buat container phpmyadmin dan hubungkan ke container mysql. gunakan opsi --link untuk menghubungkan ke container database mysql
  ```js
 dika@docker-dika-node01:~$ sudo docker run -d --name phpmyadmin --link db-mysql:db -p 8000:80 phpmyadmin:latest
 ```
