@@ -107,3 +107,141 @@ Status: Downloaded newer image for nginx:latest
   <img src="images/images-1.png" witdh="50%" height="50%" alt="nginx"/>
 </p>
 
+##  Docker Container
+> docker container ls
+untuk melihat daftar list container yang sedang up
+```js
+dika@Docker-1:~$ sudo docker container ls
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                     NAMES
+03ed4f00840d   nginx:latest   "/docker-entrypoint.…"   23 minutes ago   Up 23 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web-kits
+```
+
+> docker container stop
+untuk stop prossess pada container
+ ```js
+dika@Docker-1:~$ sudo docker container stop web-kits
+web-kits
+dika@Docker-1:~$ sudo docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+> docker container start
+digunakan untuk menjalankan container
+ ```js
+dika@Docker-1:~$ sudo docker container start web-kits
+web-kits
+dika@Docker-1:~$ sudo docker container ls
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS         PORTS                                     NAMES
+03ed4f00840d   nginx:latest   "/docker-entrypoint.…"   29 minutes ago   Up 5 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web-kits
+```
+
+> docker container inspect
+melihat detail informasi pada container seperti tanggal pembuatan, IP Address, MAC Address
+ ```js
+dika@Docker-1:~$ sudo docker container inspect web-kits
+[
+    {
+        "Id": "03ed4f00840d50a2c15ebf922cab2676d7ee975673d93de557e91075974178ce",
+        "Created": "2024-09-18T07:12:52.455670041Z",
+        "Path": "/docker-entrypoint.sh",
+        "Args": [
+            "nginx",
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 57214,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2024-09-18T07:42:12.597151707Z",    
+            "FinishedAt": "2024-09-18T07:40:29.999177049Z"    
+        },
+```
+
+> docker container rm -f
+untuk menghapus sebuah container, by default container yang masih up harus di stop terlebih dahulu jika ingin menghapusnya, namun kita bisa menggunakan opsi -f untuk menghapusnya secara paksa
+ ```js
+dika@Docker-1:~$ sudo docker container rm -f web-kits
+web-kits
+dika@Docker-1:~$ sudo docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+## Docker Exec
+docker exec, digunakan untuk mengesekusi perintah di dalam container yang sedang berjalan.
+ ```js
+dika@Docker-1:~$ sudo docker exec -it web-kits /bin/bash
+root@556fa343368f:/#
+```
+
+> Options pada docker exec
+ ```js
+-it  //opsi untuk (interactive & pseudo-TTY) yang memastikan terminal terbuka untuk input interaktif
+```
+
+> edit file .html pada nginx
+ ```js
+root@556fa343368f:/# echo '<h2><center>Selamat Datang di Website Komunitas IT</center></h2>' > /usr/share/nginx/html/index.html 
+
+root@556fa343368f:/# exit   //untuk keluar dari terminal container
+exit
+dika@Docker-1:~$
+dika@Docker-1:~$ ip -br a
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+ens33            UP             192.168.76.123/24 fe80::2e0:4cff:fe41:7b12/64
+docker0          UP             172.17.0.1/16 fe80::42:e6ff:fe38:84cc/64
+vethcd719f0@if8  UP             fe80::d49b:23ff:fed8:f72d/64
+```
+
+>Open browser and access ip_address:port
+<p align="center">
+  <img src="images/images-2.png" witdh="50%" height="50%" alt="nginx"/>
+</p>
+
+## Docker Top
+docker top, digunakan untuk melihat proces yang digunakan container atau istilahnya adalah task manager container.
+ ```js
+dika@Docker-1:~$ sudo docker top web-kits
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                57615               57595               0                   14:51               ?                   00:00:00            nginx: master process nginx -g daemon off;
+sshd                57661               57615               0                   14:51               ?                   00:00:00            nginx: worker process
+sshd                57662               57615               0                   14:51               ?                   00:00:00            nginx: worker process
+```
+
+## Docker Stats
+> docker stats
+digunakan untuk melihat resources yang digunakan oleh container
+ ```js
+dika@Docker-1:~$ sudo docker stats web-kits
+CONTAINER ID   NAME       CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+556fa343368f   web-kits   0.00%     4.32MiB / 1.911GiB   0.22%     2.99kB / 1.39kB   1.23MB / 20.5kB   3
+```
+
+> docker logs 
+ ```js
+dika@Docker-1:~$ sudo docker logs web-kits
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2024/09/18 07:51:33 [notice] 1#1: using the "epoll" event method
+2024/09/18 07:51:33 [notice] 1#1: nginx/1.27.1
+2024/09/18 07:51:33 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2024/09/18 07:51:33 [notice] 1#1: OS: Linux 6.1.0-25-amd64
+2024/09/18 07:51:33 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2024/09/18 07:51:33 [notice] 1#1: start worker processes
+2024/09/18 07:51:33 [notice] 1#1: start worker process 30
+2024/09/18 07:51:33 [notice] 1#1: start worker process 31
+192.168.76.219 - - [18/Sep/2024:08:05:11 +0000] "GET / HTTP/1.1" 200 65 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" "-"
+```
