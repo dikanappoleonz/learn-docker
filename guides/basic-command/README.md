@@ -194,7 +194,7 @@ exit
 dika@docker-dika-node01:~$
 dika@docker-dika-node01:~$ ip -br a
 lo               UNKNOWN        127.0.0.1/8 ::1/128
-ens33            UP             192.168.76.123/24 fe80::2e0:4cff:fe41:7b12/64
+ens33            UP             10.10.10.11/24 fe80::2e0:4cff:fe41:7b12/64
 docker0          UP             172.17.0.1/16 fe80::42:e6ff:fe38:84cc/64
 vethcd719f0@if8  UP             fe80::d49b:23ff:fed8:f72d/64
 ```
