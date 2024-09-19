@@ -5,8 +5,8 @@
 ## Learning Docker
 > <b>Docker</b> is a software platform that helps developers build, run, and manage containers. <b>Containers</b> are standardized components that combine an application's source code with the operating system libraries and dependencies needed to run it.
 
-- [Introduction Docker](guides/introduction-containers/README.md)
-- [Basic Command](guides/basic-command/README.md)
-- [Management Container](guides/management-container/README.md)
+- [Introduction Docker](guides/1.introduction-containers/README.md)
+- [Basic Command](guides/2.basic-command/README.md)
+- [Management Container](guides/3.management-container/README.md)
 
 Dokumentasi [docs.docker.com/](https://docs.docker.com/)
