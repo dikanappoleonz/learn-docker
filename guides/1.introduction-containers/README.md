@@ -11,6 +11,11 @@
   <img src="images/images-2.png" witdh="50%" height="50%" alt="containers"/>
 </p>
 
+## Setup Environment
+<p align="center">
+  <img src="images/images-3.png" witdh="50%" height="50%" alt="containers"/>
+</p>
+
 ## Installation Docker
 1. Setup Docker's apt repository
 ```js
