@@ -134,3 +134,134 @@ Komunitas IT #1
 Komunitas IT #2
 Komunitas IT #3
 ```
+
+> 3.3.2 Mount Volume with NFS 
+
+create directory yang ingin di share, untuk share disini kita gunakan directory data-kits sebelumnya
+```js
+dika@docker-dika-node01:~$ tree data-kits/
+data-kits/
+├── komunitas-it-1
+│   └── data.txt
+├── komunitas-it-2
+│   └── data.txt
+└── komunitas-it-3
+    └── data.txt
+
+4 directories, 3 files
+dika@docker-dika-node01:~$
+```
+
+run container baru dengan images nfs dan share directory arahin ke `data-kits`
+```js
+dika@docker-dika-node01:~$ sudo docker run -d --name nfs-server-dika --restart unless-stopped --privileged -e SHARED_DIRECTORY=/data -v ~/data-kits:/data -p 2049:2049 itsthenetwork/nfs-serv
+er-alpine
+Unable to find image 'itsthenetwork/nfs-server-alpine:latest' locally
+latest: Pulling from itsthenetwork/nfs-server-alpine
+bdf0201b3a05: Pull complete
+8e751f03d47e: Pull complete
+68ecfeaf6b18: Pull complete
+9b7b81142e96: Pull complete
+636af84da018: Pull complete
+b266affcdfe5: Pull complete
+Digest: sha256:7fa99ae65c23c5af87dd4300e543a86b119ed15ba61422444207efc7abd0ba20
+Status: Downloaded newer image for itsthenetwork/nfs-server-alpine:latest
+44b3f62844af306385115c7b21732958372f968fbdaa0cc3f011b34efc292ef0
+dika@docker-dika-node01:~$ sudo docker ps
+CONTAINER ID   IMAGE                             COMMAND              CREATED         STATUS         PORTS                                       NAMES
+44b3f62844af   itsthenetwork/nfs-server-alpine   "/usr/bin/nfsd.sh"   6 seconds ago   Up 4 seconds   0.0.0.0:2049->2049/tcp, :::2049->2049/tcp   nfs-server-dika
+dika@docker-dika-node01:~$
+```
+`options docker run container nfs:`
+```js
+--restart unless-stopped  //mengatur container restart secara otomatis kecuali dihentikan oleh user
+--privileged  //hak akses penuh ke container
+-e SHARED_DIRECTORY=/data //menentukan environment path directory yang akan di ekspos oleh nsf server
+-v ~/data-kits:/data  //mount directory sumber ke directory /data sebagai storage yang dapat diakses melalui NFS
+-p 2049:2049 //port default NFS
+```
+
+test pada `docker-dika-node02`, install nfs client untuk akses server nfs
+```js
+dika@docker-dika-node02:~$ sudo apt install nfs-common 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+nfs-common is already the newest version (1:2.6.4-3ubuntu5).
+0 upgraded, 0 newly installed, 0 to remove and 25 not upgraded.
+```
+
+make directory dan lakukan mount ke server nfs
+```js
+dika@docker-dika-node02:~$ mkdir data
+dika@docker-dika-node02:~$ tree
+.
+└── data
+
+2 directories, 0 files
+
+dika@docker-dika-node02:~$ sudo mount -v -t nfs4 10.10.10.11:/ data/
+mount.nfs4: timeout set for Fri Sep 20 02:50:34 2024
+mount.nfs4: trying text-based options 'vers=4.2,addr=10.10.10.11,clientaddr=10.10.10.12'   
+
+dika@docker-dika-node02:~$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs            92M  1.4M   91M   2% /run
+/dev/sda2        20G  4.4G   15G  24% /
+tmpfs           457M     0  457M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs            92M   12K   92M   1% /run/user/1000
+10.10.10.11:/    20G  6.1G   13G  33% /home/dika/data
+dika@docker-dika-node02:~$ tree data/
+data/
+├── komunitas-it-1
+│   └── data.txt
+├── komunitas-it-2
+│   └── data.txt
+└── komunitas-it-3
+    └── data.txt
+
+4 directories, 3 files
+```
+sekarang buat directory data kits menjadi 10 list data dari `docker-dika-node02`
+```js
+dika@docker-dika-node02:~$ for i in {4..10}; do mkdir data/komunitas-it-$i;done && for i in {4
+..10}; do echo "Komunitas IT#$i" > data/komunitas-it-$i/data.txt; done
+```
+
+cek di `docker-dika-node01`
+```js
+dika@docker-dika-node01:~$ tree -v
+.
+├── data-kits
+│   ├── komunitas-it-1
+│   │   └── data.txt
+│   ├── komunitas-it-2
+│   │   └── data.txt
+│   ├── komunitas-it-3
+│   │   └── data.txt
+│   ├── komunitas-it-4
+│   │   └── data.txt
+│   ├── komunitas-it-5
+│   │   └── data.txt
+│   ├── komunitas-it-6
+│   │   └── data.txt
+│   ├── komunitas-it-7
+│   │   └── data.txt
+│   ├── komunitas-it-8
+│   │   └── data.txt
+│   ├── komunitas-it-9
+│   │   └── data.txt
+│   └── komunitas-it-10
+│       └── data.txt
+└── snap
+    └── docker
+        ├── 2932
+        ├── common
+        └── current -> 2932
+
+17 directories, 10 files
+dika@docker-dika-node01:~$
+```
+
+> Docker Volume Permission
