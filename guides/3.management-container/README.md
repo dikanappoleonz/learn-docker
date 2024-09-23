@@ -266,6 +266,7 @@ dika@docker-dika-node01:~$
 ```
 
 > 3.3.3 Docker Volume Permission
+
 sesuai namanya docker volume permissions mengatur hak akses untuk container ketika volume di mount kedalam container. by default saat mount tanpa mendefinisikan permission maka hak akses container terhadap volume tersebut adalah rw (read write).
 
 1. Read Write
