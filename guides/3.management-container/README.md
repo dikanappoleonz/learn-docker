@@ -350,4 +350,95 @@ Komunitas IT 2024
 
 driver sshfs memungkinkan untuk membuat volume dari directory vm/instance lain dengan memanfaatkan ssh yang membuat directory remote server seolah olah berada pada mesin local.
 
-create new directory dengan file yang akan di jadikan remote server `docker-dika-node01`
+create new directory dengan file yang akan di jadikan remote server `docker-dika-node02`
+```js
+dika@docker-dika-node02:~$ mkdir website && echo "Komunitas IT 2024" > website/index.
+html 
+dika@docker-dika-node02:~$ tree
+.
+└── website
+    └── index.html
+
+2 directories, 1 file
+```
+
+pindah ke instance `docker-dika-node01` dan install plugin sshfs
+```js
+dika@docker-dika-node01:~$ sudo docker plugin install --grant-all-permissions vieux/sshfs
+latest: Pulling from vieux/sshfs
+Digest: sha256:1d3c3e42c12138da5ef7873b97f7f32cf99fb6edde75fa4f0bcf9ed277855811
+52d435ada6a4: Complete
+Installed plugin vieux/sshfs
+dika@docker-dika-node01:~$ sudo docker plugin ls
+ID             NAME                 DESCRIPTION               ENABLED
+c6bd1135f23b   vieux/sshfs:latest   sshFS plugin for Docker   true
+```
+
+pastiin kedua vm sudah di konfigurasi passswordless, kemudian definisiin directory `.ssh` pada plugin
+```js
+dika@docker-dika-node01:~$ sudo docker plugin ls
+ID             NAME                 DESCRIPTION               ENABLED
+c6bd1135f23b   vieux/sshfs:latest   sshFS plugin for Docker   true
+dika@docker-dika-node01:~$ sudo docker plugin disable vieux/sshfs
+vieux/sshfs
+dika@docker-dika-node01:~$ sudo docker plugin set vieux/sshfs sshkey.source=/home/dika/.ssh
+dika@docker-dika-node01:~$ sudo docker plugin enable vieux/sshfs:latest
+vieux/sshfs:latest
+dika@docker-dika-node01:~$ sudo docker plugin ls
+ID             NAME                 DESCRIPTION               ENABLED
+c6bd1135f23b   vieux/sshfs:latest   sshFS plugin for Docker   true
+```
+
+create volume dengan menggunakan plugin `vieux/sshfs`
+```js
+dika@docker-dika-node01:~$ sudo docker volume create --driver vieux/sshfs -o sshcmd=dika@docke
+r-dika-node02:~/website -o allow_other ssh-volume
+ssh-volume
+dika@docker-dika-node01:~$ sudo docker volume inspect ssh-volume
+[
+    {
+        "CreatedAt": "0001-01-01T00:00:00Z",
+        "Driver": "vieux/sshfs:latest",
+        "Labels": null,
+        "Mountpoint": "/mnt/volumes/418704105d9c697e81afebce6ca20ec8",
+        "Name": "ssh-volume",
+        "Options": {
+            "allow_other": "",
+            "sshcmd": "dika@docker-dika-node02:/home/dika/website"
+        },
+        "Scope": "local"
+    }
+]
+```
+
+build container dan lakukan mount ke `ssh-volume`
+```js
+dika@docker-dika-node01:~$ sudo docker run -d --name nginx-sshfs -p 8090:80 -v ssh-volume:/usr
+/share/nginx/html nginx:latest
+\\Unable to find image 'nginx:latest' locally
+latest: Pulling from library/nginx
+a2318d6c47ec: Pull complete
+095d327c79ae: Pull complete
+bbfaa25db775: Pull complete
+7bb6fb0cfb2b: Pull complete
+0723edc10c17: Pull complete
+24b3fdc4d1e3: Pull complete
+3122471704d5: Pull complete
+Digest: sha256:04ba374043ccd2fc5c593885c0eacddebabd5ca375f9323666f28dfd5a9710e3
+Status: Downloaded newer image for nginx:latest
+aa52c96ae820945512d3700f9672b5a1ad9e37d9d6a45942280e200598862a16
+```
+
+verify dengan curl
+```js
+dika@docker-dika-node01:~$ curl localhost:8090
+Komunitas IT 2024
+```
+
+test edit file di instance `docker-dika-node02` untuk memastikan ssh-volume melakukan `sync`.
+```js
+dika@docker-dika-node01:~$ ssh dika@docker-dika-node02 -y 'echo "The Usefull IT" > website/ind
+ex.html'
+dika@docker-dika-node01:~$ curl localhost:8090
+The Usefull IT
+```
