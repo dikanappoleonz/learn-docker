@@ -345,3 +345,9 @@ dika@docker-dika-node01:~$ sudo docker inspect nginx-ro | grep -i ipaddress
 dika@docker-dika-node01:~$ curl 172.17.0.4
 Komunitas IT 2024
 ```
+
+> 3.3.4 Volume SSHFS
+
+driver sshfs memungkinkan untuk membuat volume dari directory vm/instance lain dengan memanfaatkan ssh yang membuat directory remote server seolah olah berada pada mesin local.
+
+create new directory dengan file yang akan di jadikan remote server `docker-dika-node01`
