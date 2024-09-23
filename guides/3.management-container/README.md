@@ -338,12 +338,10 @@ bash: line 1: /usr/share/nginx/html/index.html: Read-only file system
 namun jika ingin merubah isi content pada nginx kita bisa lakukan pada terminal host docker atau external container, karena diawal yang diberi read-only saja hanya pada container. jika sudah verify dengan curl 
 ```js
 dika@docker-dika-node01:~$ echo "Komunitas IT 2024" > index.html && sudo cp index.html /var/snap/docker/common/var-lib-docker/volumes/ro-volume/_data
-
 dika@docker-dika-node01:~$ sudo docker inspect nginx-ro | grep -i ipaddress
             "SecondaryIPAddresses": null,
             "IPAddress": "172.17.0.4",
                     "IPAddress": "172.17.0.4",
-
 dika@docker-dika-node01:~$ curl 172.17.0.4
 Komunitas IT 2024
 ```
