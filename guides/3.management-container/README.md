@@ -271,7 +271,7 @@ sesuai namanya docker volume permissions mengatur hak akses untuk container keti
 
 1. Read Write
 
-create new volume dan mount kedalam container baru lalu pastikan <b>RW: true</b> pada saat dilakukan inspect pada container.
+create new volume dan mount kedalam container baru lalu pastikan <b>RW: true</b> saat dilakukan inspect pada container.
 ```js
 dika@docker-dika-node01:~$ sudo docker volume create rw-volume 
 [sudo] password for dika: 
