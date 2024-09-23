@@ -1,5 +1,5 @@
 <!-- Heading -->
-<h1 align="center">Introduction Containers</h1>
+<h1 align="center">1. Introduction Containers</h1>
 
 ## Container vs Virtual Machine
 <p align="center">

@@ -1,5 +1,5 @@
 <!-- Heading -->
-<h1 align="center">Management Container</h1>
+<h1 align="center">3. Management Container</h1>
 
 ## 3.1 Container Resource Limit
 secara default saat container berjalan maka dia akan menggunakan semua CPU dan Memory yang tersedia pada sistem host, tentunya hal ini akan memengaruhi container lain jika resource yang di gunakan terlalu banyak. untuk itu Container Resource Limit ini perlu di atur saat pembuatan container.
@@ -265,4 +265,82 @@ dika@docker-dika-node01:~$ tree -v
 dika@docker-dika-node01:~$
 ```
 
-> Docker Volume Permission
+> 3.3.3 Docker Volume Permission
+sesuai namanya docker volume permissions mengatur hak akses untuk container ketika volume di mount kedalam container. by default saat mount tanpa mendefinisikan permission maka hak akses container terhadap volume tersebut adalah rw (read write).
+
+1. Read Write
+create new volume dan mount kedalam container baru lalu pastikan <b>RW: true</b> pada saat dilakukan inspect pada container.
+```js
+dika@docker-dika-node01:~$ sudo docker volume create rw-volume 
+[sudo] password for dika: 
+rw-volume
+dika@docker-dika-node01:~$ sudo docker run -d --name nginx-rw -v rw-volume:/usr/share/nginx/h
+tml -p 8080:80 nginx:latest
+36de99619beb2df1a68184c380da5e9cbe665572c88cbe688925894e733cab95
+dika@docker-dika-node01:~$ sudo docker inspect nginx-rw | grep -i mounts -A10
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "rw-volume",
+                "Source": "/var/snap/docker/common/var-lib-docker/volumes/rw-volume/_data",  
+                "Destination": "/usr/share/nginx/html",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": true,
+                "Propagation": ""
+            }
+```
+kemudian ubah isi content pada nginx lalu verify dengan curl 
+```js
+dika@docker-dika-node01:~$ sudo docker exec -it nginx-rw bash -c 'echo "The Usefull IT" > /usr/share/nginx/html/index.html'
+dika@docker-dika-node01:~$ sudo docker inspect nginx-rw | grep -i ipaddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.3",
+                    "IPAddress": "172.17.0.3",
+dika@docker-dika-node01:~$ curl 127.17.0.3:8080
+The Usefull IT
+```
+
+2. Read-Only
+sesuai namanya hak akses read-only yang diterapkan ke dalam sebuah container akan membuat container hanya bisa membaca resource pada sebuah volume. ulangi konfigurasi seperti sebelumnya 
+```js
+dika@docker-dika-node01:~$ sudo docker volume create ro-volume
+ro-volume
+dika@docker-dika-node01:~$ sudo docker run -d --name nginx-ro -v ro-volume:/usr/share/nginx/h
+tml:ro -p 8081:80 nginx:latest
+160c2e57c3a8abfcb6c769a99a788455b6cd74643eabe01e4b2101203f5b4e0c
+
+// terlihat hasil inspect berbeda pada sebelumnya, karena hak akses yang diberikan read-only maka pada status RW akan false
+dika@docker-dika-node01:~$ sudo docker inspect nginx-ro | grep -i mounts -A10
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "ro-volume",
+                "Source": "/var/snap/docker/common/var-lib-docker/volumes/ro-volume/_data",  
+                "Destination": "/usr/share/nginx/html",
+                "Driver": "local",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": ""
+            }
+```
+
+dan saat dilakukan uji coba untuk merubah isi content nginx dari internal container maka akan muncul output `Read-Only`
+```js
+dika@docker-dika-node01:~$ sudo docker exec -it nginx-ro bash -c 'echo "Komunitas IT 2024" > 
+/usr/share/nginx/html/index.html'
+bash: line 1: /usr/share/nginx/html/index.html: Read-only file system
+```
+
+namun jika ingin merubah isi content pada nginx kita bisa lakukan pada terminal host docker atau external container, karena diawal yang diberi read-only saja hanya pada container. jika sudah verify dengan curl 
+```js
+dika@docker-dika-node01:~$ echo "Komunitas IT 2024" > index.html && sudo cp index.html /var/snap/docker/common/var-lib-docker/volumes/ro-volume/_data
+
+dika@docker-dika-node01:~$ sudo docker inspect nginx-ro | grep -i ipaddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.4",
+                    "IPAddress": "172.17.0.4",
+
+dika@docker-dika-node01:~$ curl 172.17.0.4
+Komunitas IT 2024
+```

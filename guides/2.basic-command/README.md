@@ -1,5 +1,5 @@
 <!-- Heading -->
-<h1 align="center">Basic Command</h1>
+<h1 align="center">2. Basic Command</h1>
 
 ## Docker Search
 Docker Serach digunakan untuk mencari image pada repository. by default menggunakan repository docker hub
