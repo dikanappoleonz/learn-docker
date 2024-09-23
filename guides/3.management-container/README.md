@@ -437,8 +437,10 @@ Komunitas IT 2024
 
 test edit file di instance `docker-dika-node02` untuk memastikan ssh-volume melakukan `sync`.
 ```js
-dika@docker-dika-node01:~$ ssh dika@docker-dika-node02 -y 'echo "The Usefull IT" > website/ind
+dika@docker-dika-node01:~$ ssh dika@docker-dika-node02 -t 'echo "The Usefull IT" > website/ind
 ex.html'
 dika@docker-dika-node01:~$ curl localhost:8090
 The Usefull IT
 ```
+
+## Network Driver Docker
