@@ -270,6 +270,7 @@ dika@docker-dika-node01:~$
 sesuai namanya docker volume permissions mengatur hak akses untuk container ketika volume di mount kedalam container. by default saat mount tanpa mendefinisikan permission maka hak akses container terhadap volume tersebut adalah rw (read write).
 
 1. Read Write
+
 create new volume dan mount kedalam container baru lalu pastikan <b>RW: true</b> pada saat dilakukan inspect pada container.
 ```js
 dika@docker-dika-node01:~$ sudo docker volume create rw-volume 
@@ -303,6 +304,7 @@ The Usefull IT
 ```
 
 2. Read-Only
+
 sesuai namanya hak akses read-only yang diterapkan ke dalam sebuah container akan membuat container hanya bisa membaca resource pada sebuah volume. ulangi konfigurasi seperti sebelumnya 
 ```js
 dika@docker-dika-node01:~$ sudo docker volume create ro-volume
