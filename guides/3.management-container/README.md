@@ -444,3 +444,133 @@ The Usefull IT
 ```
 
 ## Network Driver Docker
+`network driver` adalah sebuah komponen pada docker yang memungkinkan container untuk berkomunikasi satu sama lain ataupun dengan jaringan eksternal. by default saat pertama kali install docker akan diberi beberapa driver bawaan `bridge,host,null`
+ ```js
+ dika@docker-dika-node01:~$ sudo docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+7efe77ffbe83   bridge    bridge    local
+4b17b13cf693   host      host      local
+cf23a014cc75   none      null      local
+```
+
+> 1. Network Bridge
+driver bridge biasanya digunakan untuk menghubungkan antara container ke instance dengan membuat network baru. by default jika tidak mendefinisikan driver network maka yang akan digunakan adalah network bridge.
+
+create new network dengan menggunakan driver bridge
+```js
+dika@docker-dika-node01:~$ sudo docker network create --driver bridge my-bridge      
+c10e64e0e87da61b4c701899fa350fb6e21410e0a7b3862b5a821051430ac7ea
+dika@docker-dika-node01:~$ sudo docker network inspect my-bridge
+[
+    {
+        "Name": "my-bridge",
+        "Id": "c10e64e0e87da61b4c701899fa350fb6e21410e0a7b3862b5a821051430ac7ea",    
+        "Created": "2024-09-24T01:13:06.712590369Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+```
+
+buat container baru yang diarahkan ke nework yang baru dibuat dan verify dengan inspect untuk memastikan network yang didapat sudah sesuai.
+```js
+dika@docker-dika-node01:~$ sudo docker run -dit --name ubuntu --network my-bridge ubu
+ntu:latest
+eb4e80c7b021f56094b8140cfc64b8e2f8da425dd5ca9579ab481731635e646a
+dika@docker-dika-node01:~$ sudo docker ps
+CONTAINER ID   IMAGE           COMMAND       CREATED          STATUS         PORTS     NAMES
+eb4e80c7b021   ubuntu:latest   "/bin/bash"   11 seconds ago   Up 4 seconds             ubuntu
+dika@docker-dika-node01:~$ sudo docker inspect ubuntu | grep -i ipaddress -A2
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+--
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+--
+                    "IPAddress": "172.19.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+```
+ 
+ > 2. Network Host
+ driver host adalah driver yang memungkinkan container untuk menggunakan jaringan host secara langsung, hal ini menyebabkan tidak adanya isolasi network antara host dan container yang mana semua port dan interface yang tersedia di host juga tersedia di container.
+
+ karena by default setiap instance hanya memiliki 1 network maka kita tidak perlu create driver baru seperti sebelumnya dan bisa langsung menggunakan opsi `--driver` saat pembuatan container jika ingin menerapkan network host pada container
+
+```js
+dika@docker-dika-node01:~$ sudo docker run -dit --name ubuntu2 --network host ubuntu:latest
+f718dd0a341394e30ad851ea4db8292468af2eb286620ecdd0bc4cae0d035cd0
+dika@docker-dika-node01:~$ sudo docker ps
+CONTAINER ID   IMAGE           COMMAND       CREATED          STATUS          PORTS     NAMES
+f718dd0a3413   ubuntu:latest   "/bin/bash"   4 seconds ago    Up 3 seconds              ubuntu2
+eb4e80c7b021   ubuntu:latest   "/bin/bash"   16 minutes ago   Up 16 minutes             ubuntu
+dika@docker-dika-node01:~$ sudo docker inspect ubuntu2 | grep -i ipaddress -A5
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "host": {       //network pada container ubuntu2 menggunakan host sesuai yang didefinisikan di sebelumnya
+--
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "",
+```
+
+verify dengan masuk kedalam container untuk cek interface, by default container ubuntu nelum terinstall banyak package seperti `iproute2` untuk mengelola beberapa aspek jaringan.
+```js
+ika@docker-dika-node01:~$ sudo docker exec -it ubuntu2 /bin/bash
+root@docker-dika-node01:/# ip -br a
+bash: ip: command not found
+root@docker-dika-node01:/# apt update 
+Get:1 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+Get:2 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+29% [10 Packages 631 kB/19.3 MB 3%]     
+
+root@docker-dika-node01:/# apt install iproute2
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+iproute2 is already the newest version (6.1.0-1ubuntu6).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+root@docker-dika-node01:/# ip -br a
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+ens33            UP             192.168.76.169/24 metric 100 fe80::20c:29ff:fec9:7016/64
+ens37            UP             10.10.10.11/24 fe80::20c:29ff:fec9:7020/64
+docker0          DOWN           172.17.0.1/16
+br-c10e64e0e87d  UP             172.19.0.1/16 fe80::42:3ff:fe9f:7d/64
+veth579066e@if7  UP             fe80::88ff:2aff:fef1:665e/64
+```
