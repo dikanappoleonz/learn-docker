@@ -454,6 +454,7 @@ cf23a014cc75   none      null      local
 ```
 
 > 1. Network Bridge
+
 driver bridge biasanya digunakan untuk menghubungkan antara container ke instance dengan membuat network baru. by default jika tidak mendefinisikan driver network maka yang akan digunakan adalah network bridge.
 
 create new network dengan menggunakan driver bridge
@@ -516,6 +517,7 @@ dika@docker-dika-node01:~$ sudo docker inspect ubuntu | grep -i ipaddress -A2
 ```
  
  > 2. Network Host
+
  driver host adalah driver yang memungkinkan container untuk menggunakan jaringan host secara langsung, hal ini menyebabkan tidak adanya isolasi network antara host dan container yang mana semua port dan interface yang tersedia di host juga tersedia di container.
 
  karena by default setiap instance hanya memiliki 1 network maka kita tidak perlu create driver baru seperti sebelumnya dan bisa langsung menggunakan opsi `--driver` saat pembuatan container jika ingin menerapkan network host pada container
